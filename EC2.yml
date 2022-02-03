@@ -82,11 +82,6 @@ Resources:
       Tags: 
         - Key: "Name"
           Value: test-front-bastion
-  ElasticIp:
-    Type: AWS::EC2::EIP
-    Properties:
-      InstanceId: !Ref BastionEC2
-      Domain: vpc
 # test-app-1a
   AppEC2:
     Type: AWS::EC2::Instance
