@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description:
-  Create EC2, RDS
+  Create EC2
 
 Metadata:
   "AWS::CloudFormation::Interface":
