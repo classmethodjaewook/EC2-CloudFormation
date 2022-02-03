@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  Create EC2, RDS
+
+Metadata:
+  "AWS::CloudFormation::Interface":
+    ParameterGroups:
+      - Label:
+          default: "EC2 Configuration"
+        Parameters:
+          - BastionEC2KeyPair
+          - AppEC2KeyPair
+
+    ParameterLabels: 
+      BastionEC2KeyPair: 
+        default: "BastionEC2KeyPair"
+      AppEC2KeyPair: 
+        default: "AppEC2KeyPair"
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------# 
+Parameters:
+  BastionEC2KeyPair:
+    Type: String
+    Default: "BastionEC2KeyPair"
+  AppEC2KeyPair:
+    Type: String
+    Default: "AppEC2KeyPair"
+# ------------------------------------------------------------#
+#  Create Security Groups
+# ------------------------------------------------------------#
+Resources:
+  FrontBastionSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "test-front-bastion-sg"
+      GroupName: test-front-bastion-sg
+      SecurityGroupIngress:
+              IpProtocol: tcp
+              FromPort : 22
+              ToPort : 22
+              CidrIp: 0.0.0.0
+      VpcId: { "Fn::ImportValue": !Sub "test-vpc" }
+      Tags: 
+        - Key: "Name"
+          Value: test-front-bastion-sg
+  APPSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "test-app-sg"
+      GroupName: test-app-sg
+      SecurityGroupIngress:
+            -
+              IpProtocol: tcp
+              FromPort : 22
+              ToPort : 22
+              SourceSecurityGroupId: !GetAtt FrontBastionSecurityGroup.GroupId
+      VpcId: { "Fn::ImportValue": !Sub "test-vpc" }
+      Tags: 
+        - Key: "Name"
+          Value: test-app-sg
+# ------------------------------------------------------------#
+#  Create EC2 Instance
+# ------------------------------------------------------------#
+# Bastion EC2
+  BastionEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0f66bf23ed74d9284
+      InstanceType: t3.micro
+      KeyName: !Ref BastionEC2KeyPair
+      DisableApiTermination: true
+      BlockDeviceMappings: 
+      - DeviceName: "/dev/xvda"
+        Ebs: 
+          VolumeType: "gp2"
+          DeleteOnTermination: "true"
+          VolumeSize: "8"
+      SecurityGroupIds:
+        - !Ref FrontBastionSecurityGroup
+      SubnetId: { "Fn::ImportValue": !Sub "test-front-subnet-1a" }
+      Tags: 
+        - Key: "Name"
+          Value: test-front-bastion
+  ElasticIp:
+    Type: AWS::EC2::EIP
+    Properties:
+      InstanceId: !Ref BastionEC2
+      Domain: vpc
+# test-app-1a
+  AppEC2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0f66bf23ed74d9284
+      InstanceType: t3.micro
+      KeyName: !Ref AppEC2KeyPair
+      DisableApiTermination: true
+      BlockDeviceMappings: 
+      - DeviceName: "/dev/xvda"
+        Ebs: 
+          VolumeType: "gp2"
+          DeleteOnTermination: "true"
+          VolumeSize: "50"
+      SecurityGroupIds:
+        - !Ref APPSecurityGroup
+      SubnetId: { "Fn::ImportValue": !Sub "test-application-subnet-1a" }
+      Tags: 
+        - Key: "Name"
+          Value: test-app-1a
