@@ -27,7 +27,7 @@ Parameters:
     Type: String
     Default: "AppEC2KeyPair"
 # ------------------------------------------------------------#
-#  Create Security Groups
+#  Create Security Group
 # ------------------------------------------------------------#
 Resources:
   FrontBastionSecurityGroup:

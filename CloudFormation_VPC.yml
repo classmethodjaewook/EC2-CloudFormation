@@ -32,19 +32,19 @@ Parameters:
 
   PublicSubnetACIDR:
     Type: String
-    Default: "10.0.0.0/18"
+    Default: "10.0.0.0/24"
 
   PublicSubnetCCIDR:
     Type: String
-    Default: "10.0.64.0/18"
+    Default: "10.0.64.0/24"
 
   PrivateSubnetACIDR:
     Type: String
-    Default: "10.0.128.0/18"
+    Default: "10.0.128.0/24"
 
   PrivateSubnetCCIDR:
     Type: String
-    Default: "10.0.192.0/18"
+    Default: "10.0.192.0/24"
 #-------------------------------------------------------------------
 #Set VPC, InternetGateway, Subnet
 #-------------------------------------------------------------------
@@ -73,7 +73,7 @@ Resources:
   PublicSubnetA: 
     Type: "AWS::EC2::Subnet"
     Properties: 
-      AvailabilityZone: "ap-northeast-2a"
+      AvailabilityZone: "ap-northeast-1a"
       CidrBlock: !Ref PublicSubnetACIDR
       VpcId: !Ref VPC 
       Tags: 
@@ -82,7 +82,7 @@ Resources:
   PublicSubnetC: 
     Type: "AWS::EC2::Subnet"
     Properties: 
-      AvailabilityZone: "ap-northeast-2c"
+      AvailabilityZone: "ap-northeast-1c"
       CidrBlock: !Ref PublicSubnetCCIDR
       VpcId: !Ref VPC 
       Tags: 
@@ -91,7 +91,7 @@ Resources:
   PrivateSubnetA: 
     Type: "AWS::EC2::Subnet"
     Properties: 
-      AvailabilityZone: "ap-northeast-2a"
+      AvailabilityZone: "ap-northeast-1a"
       CidrBlock: !Ref PrivateSubnetACIDR
       VpcId: !Ref VPC 
       Tags: 
@@ -100,7 +100,7 @@ Resources:
   PrivateSubnetC: 
     Type: "AWS::EC2::Subnet"
     Properties: 
-      AvailabilityZone: "ap-northeast-2c"
+      AvailabilityZone: "ap-northeast-1c"
       CidrBlock: !Ref PrivateSubnetCCIDR
       VpcId: !Ref VPC 
       Tags: 
